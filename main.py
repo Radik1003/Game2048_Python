@@ -1,4 +1,3 @@
-# положить в массив два значения
 
 from logics import *
 import pygame
@@ -18,7 +17,7 @@ def draw_top_gamers():
         name, score = gamer
         s = f'{index+1}. {name} - {score}'
         text_gamer = font_gamer.render(s, True, COLOR_TEXT)
-        screen.blit(text_gamer, (260, 30 + 26*index))
+        screen.blit(text_gamer, (265, 30 + 26*index))
         print(index, name, score)
 
 def draw_interface(score, delta = 0):
@@ -123,14 +122,14 @@ def draw_intro():
                 pygame.quit()
                 sys.exit(0)
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
-                # if event.unicode.isalpha():
+                # if event.key == pygame.K_a:
+                if event.unicode.isalpha():
                     if name == 'Введите имя':
-                        # name = event.encode # event.unicode do not work
-                        name = str(event.key).encode('utf-8')
+                        name = event.unicode # event.unicode do not work
+                        # name = str(event.key).encode('utf-8')
                     else:
-                        name += str(event.key).encode('utf-8')
-
+                        # name += str(event.key).encode('utf-8')
+                        name += event.unicode
                 elif event.key == pygame.K_BACKSPACE:
                     name = name[:-1]
                 elif event.key == pygame.K_RETURN:
@@ -164,8 +163,8 @@ def draw_game_over():
         text = f'Рекорд {best_score}'
     text_record = font.render(text, True, WHITE)
     insert_result(USERNAME, score)
-    make_decision = False
 
+    make_decision = False
     while not make_decision:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
