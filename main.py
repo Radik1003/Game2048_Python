@@ -1,12 +1,13 @@
-
 from logics import *
 import pygame
 # import unicodedata
 import sys
 from database import get_best, cur, insert_result
-
+import json
+import os
 
 GAMERS_DB = get_best()
+
 
 def draw_top_gamers():
     font_top = pygame.font.SysFont("serif", 28)
@@ -15,13 +16,14 @@ def draw_top_gamers():
     screen.blit(text_head, (280, 5))
     for index, gamer in enumerate(GAMERS_DB):
         name, score = gamer
-        s = f'{index+1}. {name} - {score}'
+        s = f'{index + 1}. {name} - {score}'
         text_gamer = font_gamer.render(s, True, COLOR_TEXT)
-        screen.blit(text_gamer, (285, 30 + 26*index))
+        screen.blit(text_gamer, (285, 30 + 26 * index))
         # pygame.display.update()
         print(index, name, score)
 
-def draw_interface(score, delta = 0):
+
+def draw_interface(score, delta=0):
     pygame.draw.rect(screen, WHITE, TITLE_REC)
     font = pygame.font.SysFont("comicsansms, ", 70)
     font_score = pygame.font.SysFont("comicsansms", 48)
@@ -50,6 +52,7 @@ def draw_interface(score, delta = 0):
                 text_y = h + (SIZE_BLOCK - font_h) / 2
                 screen.blit(text, (text_x, text_y))
 
+
 COLOR_DELTA = (19, 136, 8)
 COLOR_TEXT = (255, 127, 0)
 COLORS = {
@@ -74,9 +77,10 @@ BLACK = (0, 0, 0)
 BLOCKS = 4
 SIZE_BLOCK = 110
 MARGIN = 10
-WIDTH = BLOCKS*SIZE_BLOCK + (BLOCKS + 1)*MARGIN
+WIDTH = BLOCKS * SIZE_BLOCK + (BLOCKS + 1) * MARGIN
 HEIGHT = WIDTH + 110
 TITLE_REC = pygame.Rect(0, 0, WIDTH, 110)
+
 
 def init_const():
     global score, mas
@@ -96,10 +100,21 @@ def init_const():
     x2, y2 = get_index_from_number(random_num2)
     mas = insert_2_or_4(mas, x2, y2)
 
+
 mas = None
 score = None
-init_const()
 USERNAME = None
+path = os.getcwd()
+if 'data.txt' in os.listdir():
+    with open('data.txt') as file:
+        data = json.load(file)
+        mas = data['mas']
+        score = data['score']
+        USERNAME = data['user']
+    full_path = os.path.join(path, 'data.txt')
+    os.remove(full_path)
+else:
+    init_const()
 
 print(get_empty_list(mas))
 pretty_print(mas)
@@ -107,6 +122,7 @@ pretty_print(mas)
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("2048")
+
 
 def draw_intro():
     img2048 = pygame.image.load("2048.jpg")
@@ -126,7 +142,7 @@ def draw_intro():
                 # if event.key == pygame.K_a:
                 if event.unicode.isalpha():
                     if name == 'Введите имя':
-                        name = event.unicode # event.unicode do not work
+                        name = event.unicode  # event.unicode do not work
                         # name = str(event.key).encode('utf-8')
                     else:
                         # name += str(event.key).encode('utf-8')
@@ -145,11 +161,12 @@ def draw_intro():
         rect_name = text_name.get_rect()
         rect_name.center = screen.get_rect().center
 
-        screen.blit(pygame.transform.scale(img2048, [200,200]), [10,10])
+        screen.blit(pygame.transform.scale(img2048, [200, 200]), [10, 10])
         screen.blit(text_welcome, (230, 80))
         screen.blit(text_name, rect_name)
         pygame.display.update()
     screen.fill(BLACK)
+
 
 def draw_game_over():
     global USERNAME, mas, score, GAMERS_DB
@@ -186,9 +203,19 @@ def draw_game_over():
         screen.blit(text_game_over, (220, 80))
         screen.blit(text_score, (30, 250))
         screen.blit(text_record, (30, 300))
-        screen.blit(pygame.transform.scale(img2048, [200,200]), [10,10])
+        screen.blit(pygame.transform.scale(img2048, [200, 200]), [10, 10])
         pygame.display.update()
     screen.fill(BLACK)
+
+
+def save_game():
+    data = {
+        'user': USERNAME,
+        'score': score,
+        'mas': mas
+    }
+    with open('data.txt', 'w') as outfile:
+        json.dump(data, outfile)
 
 def game_loop():
     global score, mas
@@ -198,6 +225,7 @@ def game_loop():
     while is_zero_in_mas(mas) or can_move(mas):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                save_game()
                 pygame.quit()
                 sys.exit(0)
             elif event.type == pygame.KEYDOWN:
@@ -225,13 +253,9 @@ def game_loop():
                 pygame.display.update()
         print(USERNAME)
 
+
 while True:
     if USERNAME is None:
         draw_intro()
     game_loop()
     draw_game_over()
-
-
-
-
-
