@@ -12,26 +12,27 @@ def draw_top_gamers():
     font_top = pygame.font.SysFont("serif", 28)
     font_gamer = pygame.font.SysFont("serif", 24)
     text_head = font_top.render("Best tries: ", True, COLOR_TEXT)
-    screen.blit(text_head, (260, 5))
+    screen.blit(text_head, (280, 5))
     for index, gamer in enumerate(GAMERS_DB):
         name, score = gamer
         s = f'{index+1}. {name} - {score}'
         text_gamer = font_gamer.render(s, True, COLOR_TEXT)
-        screen.blit(text_gamer, (265, 30 + 26*index))
+        screen.blit(text_gamer, (285, 30 + 26*index))
+        # pygame.display.update()
         print(index, name, score)
 
 def draw_interface(score, delta = 0):
     pygame.draw.rect(screen, WHITE, TITLE_REC)
-    font = pygame.font.SysFont("stxingkai, ", 70)
-    font_score = pygame.font.SysFont("simsun", 48)
-    font_delta = pygame.font.SysFont("simsun", 30)
+    font = pygame.font.SysFont("comicsansms, ", 70)
+    font_score = pygame.font.SysFont("comicsansms", 48)
+    font_delta = pygame.font.SysFont("comicsansms", 26)
     text_score = font_score.render("Score: ", True, COLOR_TEXT)
     text_score_value = font_score.render(f"{score}", True, COLOR_TEXT)
     screen.blit(text_score, (20, 30))
     screen.blit(text_score_value, (175, 30))
     if delta > 0:
         text_delta = font_delta.render(f"+{delta}", True, COLOR_DELTA)
-        screen.blit(text_delta, (170, 70))
+        screen.blit(text_delta, (170, 75))
     pretty_print(mas)
 
     draw_top_gamers()
@@ -109,7 +110,7 @@ pygame.display.set_caption("2048")
 
 def draw_intro():
     img2048 = pygame.image.load("2048.jpg")
-    font = pygame.font.SysFont("stxingkai, ", 75)
+    font = pygame.font.SysFont("comicsansms, ", 55)
     text_welcome = font.render("Welcome!", True, WHITE)
 
     name = 'Введите имя'
@@ -151,9 +152,9 @@ def draw_intro():
     screen.fill(BLACK)
 
 def draw_game_over():
-    global USERNAME, mas, score
+    global USERNAME, mas, score, GAMERS_DB
     img2048 = pygame.image.load("2048.jpg")
-    font = pygame.font.SysFont("stxingkai, ", 65)
+    font = pygame.font.SysFont("comicsansms, ", 48)
     text_game_over = font.render("Game Over!", True, WHITE)
     text_score = font.render(f"Вы набрали: {score} ", True, WHITE)
     best_score = GAMERS_DB[0][1]
@@ -163,6 +164,7 @@ def draw_game_over():
         text = f'Рекорд {best_score}'
     text_record = font.render(text, True, WHITE)
     insert_result(USERNAME, score)
+    GAMERS_DB = get_best()
 
     make_decision = False
     while not make_decision:
@@ -192,6 +194,7 @@ def game_loop():
     global score, mas
     draw_interface(score)
     pygame.display.update()
+    is_mas_move = False
     while is_zero_in_mas(mas) or can_move(mas):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -200,22 +203,24 @@ def game_loop():
             elif event.type == pygame.KEYDOWN:
                 delta = 0
                 if event.key == pygame.K_LEFT:
-                    mas, delta = move_left(mas)
+                    mas, delta, is_mas_move = move_left(mas)
                 elif event.key == pygame.K_RIGHT:
-                    mas, delta = move_right(mas)
+                    mas, delta, is_mas_move = move_right(mas)
                 elif event.key == pygame.K_UP:
-                    mas, delta = move_up(mas)
+                    mas, delta, is_mas_move = move_up(mas)
                 elif event.key == pygame.K_DOWN:
-                    mas, delta = move_down(mas)
+                    mas, delta, is_mas_move = move_down(mas)
                 score += delta
 
-                if is_zero_in_mas(mas):
+                if is_zero_in_mas(mas) and is_mas_move:
                     empty = get_empty_list(mas)
                     random.shuffle(empty)
                     random_num = empty.pop()
                     x, y = get_index_from_number(random_num)
                     mas = insert_2_or_4(mas, x, y)
                     print(f'Мы заполнили элемент под номером {random_num}')
+                    is_mas_move = False
+
                 draw_interface(score, delta)
                 pygame.display.update()
         print(USERNAME)

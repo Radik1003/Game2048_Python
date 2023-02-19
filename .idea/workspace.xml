@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3e4b03f2-45af-4ca8-9122-b8513186fd9f" name="Changes" comment="Update with Unicode" />
+    <list default="true" id="3e4b03f2-45af-4ca8-9122-b8513186fd9f" name="Changes" comment="Update with Unicode">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/2048.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/2048.sqlite" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logics.py" beforeDir="false" afterPath="$PROJECT_DIR$/logics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
